@@ -1,0 +1,158 @@
+{{ template "base" . }}
+
+{{define "content"}}
+
+    {{if .Error}}
+        <h1>{{.Error}}</h1>
+    {{end}}
+
+<div id="main">
+
+</div>
+
+
+<script>
+    // Get current account status
+        $.post( "/getStatus", JSON.stringify({"customer_code":{{.CustomerCode}}}))
+            .done(function(data) {
+                let status = data['status']
+                renderStatus(status)
+            });
+
+
+        var blockButton = document.createElement("input")
+        blockButton.type = "button"
+        blockButton.value = "Заблокировать"
+        blockButton.id = "block-button"
+        blockButton.classList.add("btn", "btn-block")
+        var unblockButton = document.createElement("input")
+        unblockButton.type = "button"
+        unblockButton.value = `Разблокировать`
+        unblockButton.id = "unblock-button"
+        unblockButton.classList.add("btn")
+
+
+    function renderStatus(status) {
+        if (status == "active") {
+            var activeBlock = $("<div></div>").attr({id: "active"}).html
+            (`<h3>Учетная запись активна</h3>`)
+            activeBlock.append(blockButton)
+            $("#main").append(activeBlock)
+        } else if (status == "blocked") {
+            var blockedBlock = $("<div></div>").attr({id: "blocked"}).html
+            (`<h3>Учетная запись заблокирована</h3>`)
+            blockedBlock.append(unblockButton)
+            $("#main").append(blockedBlock)
+        }
+    }
+
+    blockButton.addEventListener("click", function (e) {
+        $.ajax("/setBlock", {
+            type: "POST",
+            data: JSON.stringify({"customer_code":`{{.CustomerCode}}`}),
+            statusCode: {
+                200: function (response) {
+                    if ("status" in response) {
+                        if (response["status"] == "OK") {
+                            let message = response["status"]
+                            console.log(message)
+                            let resultBlock = document.createElement("div")
+                            resultBlock.id = "result"
+                            resultBlock.innerHTML = `<p>Учетная запись успешно заблокирована. Блокировка применится через 5-10 минут.</p>`
+                            $("#main").append(resultBlock)
+                            blockButton.style.display = "none"
+                        }
+                    }
+                    if ("error" in response) {
+                        if (response["error"].length > 0) {
+                            $("#result").remove()
+                            let error = response['error']
+                            let lastBlock = response['lastBlock']
+
+                            console.log(error)
+                            console.log(lastBlock)
+
+                            let resultBlock = document.createElement("div")
+                            resultBlock.id = "result"
+                            resultBlock.innerHTML = `<p>${error}</br>Дата последней блокировки: ${lastBlock}</p>`
+
+                            $("#main").append(resultBlock)
+                            blockButton.style.display = "none"
+                        }
+                    }
+                },
+                201: function (response) {
+                    alert('201');
+                },
+                400: function (response) {
+                    console.log(response['responseText'])
+                    $("#result").remove()
+                    let resultBlock = document.createElement("div")
+                    resultBlock.id = "result"
+                    resultBlock.innerHTML = `<p>Ошибка при подключении услуги. Пожалуйста, обратитесь в службу технической поддержки 8(800)775-76-74</p>`
+                },
+                404: function (response) {
+                    alert('404');
+                }
+            }
+        });
+    })
+
+// Кнопка "Разблокировать"
+    unblockButton.addEventListener("click", function (e) {
+        $.ajax("/removeBlock", {
+            type: "POST",
+            data: JSON.stringify({"customer_code":`{{.CustomerCode}}`}),
+            statusCode: {
+                200: function (response) {
+                    if ("status" in response) {
+                        if (response["status"] == "OK") {
+                            let message = response["status"]
+                            console.log(message)
+                            let resultBlock = document.createElement("div")
+                            resultBlock.id = "result"
+                            resultBlock.innerHTML = `<p>Учетная запись успешно разблокирована. Интернет скоро заработает.</p>`
+                            $("#main").append(resultBlock)
+                            unblockButton.style.display = "none"
+                        }
+                    }
+                },
+                400: function (response) {
+                    console.log(response['responseText'])
+                    $("#result").remove()
+                    let resultBlock = document.createElement("div")
+                    resultBlock.id = "result"
+                    resultBlock.innerHTML = `<p>Ошибка при подключении услуги. Пожалуйста, обратитесь в службу технической поддержки 8(800)775-76-74</p>`
+                },
+            }
+        });
+    })
+
+</script>
+{{end}}
+
+
+<style>
+
+    .btn {
+        font-family: "Montserrat", Sans-serif;
+        font-size: 14px;
+        background-color: rgba(234,234,234,0.02);
+        border-style: solid;
+        border-width: 1px 1px 1px 1px;
+        border-color: #0090d3;
+        padding: 15px;
+        cursor: pointer;
+        font-weight: 500;
+        transition-duration: 0.3s;
+
+    }
+
+    .btn:hover {
+        transition-duration: 0.3s;
+        padding-right: 25px;
+        padding-left: 25px;
+        color: #0090d3;
+
+    }
+</style>
