@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"github.com/gorilla/mux"
 	"hydra-blocking/external/config"
 	"hydra-blocking/external/hydra"
@@ -52,10 +53,12 @@ func (s *Server) RunServer() {
 	s.initRouter()
 
 	// Run http server
-	err = http.ListenAndServe(":8080", s.router)
+	log.Printf("Server is running on %s:%s\n", s.config.Server.IPAddress, s.config.Server.Port)
+	err = http.ListenAndServe(fmt.Sprintf("%s:%s", s.config.Server.IPAddress, s.config.Server.Port), s.router)
 	if err != nil {
 		log.Fatalln(err)
 	}
+
 }
 
 func (s *Server) initRouter() {

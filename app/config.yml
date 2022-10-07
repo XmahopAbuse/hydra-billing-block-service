@@ -13,3 +13,6 @@ store:
     driver: "postgres"
 hydra_block_subscription_id: "608276901"
 hydra_hash_sum_salt: "OTc1NjdkNzk2MWExM2YzYzA5MDljM2Nh"
+server:
+  ip_address: "localhost"
+  port: "8080"

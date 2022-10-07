@@ -8,6 +8,7 @@ import (
 	_ "github.com/golang-migrate/migrate/source/file"
 	_ "github.com/lib/pq"
 	"hydra-blocking/external/config"
+	"log"
 )
 
 type Store struct {
@@ -46,7 +47,7 @@ func (s *Store) Close() {
 
 func (s *Store) Migrate() error {
 	if s.driver == "postgres" {
-		fmt.Println("Run migrations")
+		log.Println("Running migrations...")
 		driver, err := postgres.WithInstance(s.db, &postgres.Config{})
 		if err != nil {
 			return err
@@ -60,6 +61,7 @@ func (s *Store) Migrate() error {
 		if err = m.Up(); err != migrate.ErrNoChange && err != nil {
 			return err
 		}
+		log.Println("Migrations apply")
 
 	} else {
 		fmt.Println("test")

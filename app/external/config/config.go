@@ -24,6 +24,10 @@ type Config struct {
 	} `yaml:"store"`
 	HydraBlockSubscritionId string `yaml:"hydra_block_subscription_id"`
 	HydraHashSumSalt        string `yaml:"hydra_hash_sum_salt"`
+	Server                  struct {
+		IPAddress string `yaml:"ip_address"`
+		Port      string `yaml:"port"`
+	} `yaml:"server"`
 }
 
 func NewConfig(configPath string) (*Config, error) {
