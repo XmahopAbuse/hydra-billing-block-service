@@ -14,5 +14,5 @@ store:
 hydra_block_subscription_id: "608276901"
 hydra_hash_sum_salt: "OTc1NjdkNzk2MWExM2YzYzA5MDljM2Nh"
 server:
-  ip_address: "localhost"
+  ip_address: "0.0.0.0"
   port: "8080"
