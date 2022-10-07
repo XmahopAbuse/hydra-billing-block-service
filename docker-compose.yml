@@ -21,3 +21,9 @@ services:
     depends_on:
       - "db"
     restart: always
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8083:8080
