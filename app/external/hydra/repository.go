@@ -70,11 +70,11 @@ func (r *HydraRepository) GetCustomerById(id string) (*HydraCustomer, error) {
 }
 
 // Получение активного акта начисления по account id
-func (r *HydraRepository) GetChargeLogByAccountId(id string) (*HydraChargeLog, error) {
+func (r *HydraRepository) GetChargeLogByAccountId(customer *HydraCustomer) (*HydraChargeLog, error) {
 	var chargelog HydraChargeLog
-	query := "SELECT N_DOC_ID, VC_NAME FROM SD_V_CHARGE_LOGS where n_account_id = :1 AND (N_DOC_STATE_ID = 4003 OR N_DOC_STATE_ID=10003)"
+	query := "SELECT N_DOC_ID, VC_NAME FROM SD_V_CHARGE_LOGS where n_account_id = :1 AND (N_DOC_STATE_ID = 4003 OR N_DOC_STATE_ID=10003)  AND N_OBJECT_ID=:2"
 
-	err := r.store.db.QueryRow(query, id).Scan(&chargelog.DocId, &chargelog.Name)
+	err := r.store.db.QueryRow(query, customer.AccountId, customer.DeviceId).Scan(&chargelog.DocId, &chargelog.Name)
 
 	if err != nil {
 		if err == sql.ErrNoRows {

@@ -78,7 +78,7 @@ func (s *Server) SetBlockHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Получаем текущий акт начисления
-	chargeLog, err := s.hydraStore.Repository.GetChargeLogByAccountId(customer.AccountId)
+	chargeLog, err := s.hydraStore.Repository.GetChargeLogByAccountId(customer)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusBadRequest)
@@ -171,7 +171,7 @@ func (s *Server) RemoveBlockHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Получаем текущий Акт Начислений
-	chargeLog, err := s.hydraStore.Repository.GetChargeLogByAccountId(customer.AccountId)
+	chargeLog, err := s.hydraStore.Repository.GetChargeLogByAccountId(customer)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		er := Error{Error: "Ошибка при получении акта начислений"}
@@ -246,7 +246,7 @@ func (s *Server) GetStatusHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Получаем текущий акт начисления
-	chargeLog, err := s.hydraStore.Repository.GetChargeLogByAccountId(customer.AccountId)
+	chargeLog, err := s.hydraStore.Repository.GetChargeLogByAccountId(customer)
 	fmt.Println(chargeLog)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
